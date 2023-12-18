@@ -106,13 +106,13 @@ func (meta *Meta) Contribute(p *Page) (err error) {
 	case meta.IsOGLocale():
 		p.OpenGraph.Locale = meta.Content
 	case meta.IsOGUpdatedTime():
-		p.OpenGraph.UpdatedTime = meta.Content
+		p.OpenGraph.UpdatedTime = ParseDateP(meta.Content)
 	case meta.IsArticleAuthor():
 		p.Article.Author = meta.Content
 	case meta.IsArticlePublishedTime():
-		p.Article.PublishedTime = meta.Content
+		p.Article.PublishedTime = ParseDateP(meta.Content)
 	case meta.IsArticleModifiedTime():
-		p.Article.ModifiedTime = meta.Content
+		p.Article.ModifiedTime = ParseDateP(meta.Content)
 	case meta.IsArticlePublisher():
 		p.Article.Publisher = meta.Content
 	case meta.IsArticleSection():

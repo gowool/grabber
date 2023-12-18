@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"path"
 	"strings"
+	"time"
 
 	"golang.org/x/net/html"
 )
@@ -22,24 +23,24 @@ type Page struct {
 }
 
 type Article struct {
-	PublishedTime string   `json:"published_time,omitempty"`
-	ModifiedTime  string   `json:"modified_time,omitempty"`
-	Publisher     string   `json:"publisher,omitempty"`
-	Author        string   `json:"author,omitempty"`
-	Section       []string `json:"section,omitempty"`
+	PublishedTime *time.Time `json:"published_time,omitempty"`
+	ModifiedTime  *time.Time `json:"modified_time,omitempty"`
+	Publisher     string     `json:"publisher,omitempty"`
+	Author        string     `json:"author,omitempty"`
+	Section       []string   `json:"section,omitempty"`
 }
 
 type OpenGraph struct {
-	Title       string  `json:"title,omitempty"`
-	Type        string  `json:"type,omitempty"`
-	URL         string  `json:"url,omitempty"`
-	Description string  `json:"description,omitempty"`
-	Locale      string  `json:"locale,omitempty"`
-	SiteName    string  `json:"site_name,omitempty"`
-	UpdatedTime string  `json:"updated_time,omitempty"`
-	Video       []Video `json:"video,omitempty"`
-	Image       []Image `json:"image,omitempty"`
-	Audio       []Audio `json:"audio,omitempty"`
+	Title       string     `json:"title,omitempty"`
+	Type        string     `json:"type,omitempty"`
+	URL         string     `json:"url,omitempty"`
+	Description string     `json:"description,omitempty"`
+	Locale      string     `json:"locale,omitempty"`
+	SiteName    string     `json:"site_name,omitempty"`
+	UpdatedTime *time.Time `json:"updated_time,omitempty"`
+	Video       []Video    `json:"video,omitempty"`
+	Image       []Image    `json:"image,omitempty"`
+	Audio       []Audio    `json:"audio,omitempty"`
 }
 
 // Image represents a structure of "og:image".
@@ -143,6 +144,7 @@ func (p *Page) Parse(body io.Reader) error {
 			case "link":
 				LinkTag(t.Attr).Contribute(p)
 			}
+		default:
 		}
 	}
 }

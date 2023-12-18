@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	Client         = &http.Client{}
+	Client         = http.DefaultClient
 	DefaultHeaders = map[string]string{
 		"Accept":          "text/html",
 		"Accept-Encoding": "gzip",
