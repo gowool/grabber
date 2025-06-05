@@ -31,8 +31,8 @@ func LinkTag(attrs []html.Attribute) *Link {
 func (link *Link) Contribute(p *Page) {
 	switch {
 	case link.IsIcon():
-		if len(p.Favicon) == 0 || p.Favicon[len(p.Favicon)-1] != link.Href {
-			p.Favicon = append(p.Favicon, link.Href)
+		if len(p.Favicons) == 0 || p.Favicons[len(p.Favicons)-1] != link.Href {
+			p.Favicons = append(p.Favicons, link.Href)
 		}
 	}
 }

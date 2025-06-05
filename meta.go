@@ -36,7 +36,7 @@ func (meta *Meta) Contribute(p *Page) (err error) {
 	case meta.IsKeywords():
 		p.Keywords = meta.Content
 	case meta.IsAuthor():
-		p.Author = meta.Content
+		p.Authors = append(p.Authors, meta.Content)
 	case meta.IsOGTitle():
 		p.OpenGraph.Title = meta.Content
 	case meta.IsOGDescription():
@@ -44,24 +44,24 @@ func (meta *Meta) Contribute(p *Page) (err error) {
 	case meta.IsOGSiteName():
 		p.OpenGraph.SiteName = meta.Content
 	case meta.IsOGImage():
-		if len(p.OpenGraph.Image) == 0 || p.OpenGraph.Image[len(p.OpenGraph.Image)-1].URL != meta.Content {
-			p.OpenGraph.Image = append(p.OpenGraph.Image, Image{URL: meta.Content})
+		if len(p.OpenGraph.Images) == 0 || p.OpenGraph.Images[len(p.OpenGraph.Images)-1].URL != meta.Content {
+			p.OpenGraph.Images = append(p.OpenGraph.Images, Image{URL: meta.Content})
 		}
 	case meta.IsPropertyOf("og:image"):
-		if len(p.OpenGraph.Image) == 0 {
+		if len(p.OpenGraph.Images) == 0 {
 			return nil
 		}
 		switch meta.Property {
 		case "og:image:type":
-			p.OpenGraph.Image[len(p.OpenGraph.Image)-1].Type = meta.Content
+			p.OpenGraph.Images[len(p.OpenGraph.Images)-1].Type = meta.Content
 		case "og:image:secure_url":
-			p.OpenGraph.Image[len(p.OpenGraph.Image)-1].SecureURL = meta.Content
+			p.OpenGraph.Images[len(p.OpenGraph.Images)-1].SecureURL = meta.Content
 		case "og:image:alt":
-			p.OpenGraph.Image[len(p.OpenGraph.Image)-1].Alt = meta.Content
+			p.OpenGraph.Images[len(p.OpenGraph.Images)-1].Alt = meta.Content
 		case "og:image:width":
-			p.OpenGraph.Image[len(p.OpenGraph.Image)-1].Width, err = strconv.Atoi(meta.Content)
+			p.OpenGraph.Images[len(p.OpenGraph.Images)-1].Width, err = strconv.Atoi(meta.Content)
 		case "og:image:height":
-			p.OpenGraph.Image[len(p.OpenGraph.Image)-1].Height, err = strconv.Atoi(meta.Content)
+			p.OpenGraph.Images[len(p.OpenGraph.Images)-1].Height, err = strconv.Atoi(meta.Content)
 		}
 	case meta.IsOGAudio():
 		if len(p.OpenGraph.Audio) == 0 || p.OpenGraph.Audio[len(p.OpenGraph.Audio)-1].URL != meta.Content {
@@ -78,26 +78,26 @@ func (meta *Meta) Contribute(p *Page) (err error) {
 			p.OpenGraph.Audio[len(p.OpenGraph.Audio)-1].SecureURL = meta.Content
 		}
 	case meta.IsOGVideo():
-		if len(p.OpenGraph.Video) == 0 || p.OpenGraph.Video[len(p.OpenGraph.Video)-1].URL != meta.Content {
-			p.OpenGraph.Video = append(p.OpenGraph.Video, Video{URL: meta.Content})
+		if len(p.OpenGraph.Videos) == 0 || p.OpenGraph.Videos[len(p.OpenGraph.Videos)-1].URL != meta.Content {
+			p.OpenGraph.Videos = append(p.OpenGraph.Videos, Video{URL: meta.Content})
 		}
 	case meta.IsPropertyOf("og:video"):
-		if len(p.OpenGraph.Video) == 0 {
+		if len(p.OpenGraph.Videos) == 0 {
 			return nil
 		}
 		switch meta.Property {
 		case "og:video:type":
-			p.OpenGraph.Video[len(p.OpenGraph.Video)-1].Type = meta.Content
+			p.OpenGraph.Videos[len(p.OpenGraph.Videos)-1].Type = meta.Content
 		case "og:video:secure_url":
-			p.OpenGraph.Video[len(p.OpenGraph.Video)-1].SecureURL = meta.Content
+			p.OpenGraph.Videos[len(p.OpenGraph.Videos)-1].SecureURL = meta.Content
 		case "og:video:width":
-			p.OpenGraph.Video[len(p.OpenGraph.Video)-1].Width, err = strconv.Atoi(meta.Content)
+			p.OpenGraph.Videos[len(p.OpenGraph.Videos)-1].Width, err = strconv.Atoi(meta.Content)
 		case "og:video:height":
-			p.OpenGraph.Video[len(p.OpenGraph.Video)-1].Height, err = strconv.Atoi(meta.Content)
+			p.OpenGraph.Videos[len(p.OpenGraph.Videos)-1].Height, err = strconv.Atoi(meta.Content)
 		case "og:video:duration":
-			p.OpenGraph.Video[len(p.OpenGraph.Video)-1].Duration, err = strconv.Atoi(meta.Content)
+			p.OpenGraph.Videos[len(p.OpenGraph.Videos)-1].Duration, err = strconv.Atoi(meta.Content)
 		case "og:video:tag":
-			p.OpenGraph.Video[len(p.OpenGraph.Video)-1].Tag = append(p.OpenGraph.Video[len(p.OpenGraph.Video)-1].Tag, meta.Content)
+			p.OpenGraph.Videos[len(p.OpenGraph.Videos)-1].Tag = append(p.OpenGraph.Videos[len(p.OpenGraph.Videos)-1].Tag, meta.Content)
 		}
 	case meta.IsOGType():
 		p.OpenGraph.Type = meta.Content
@@ -106,17 +106,19 @@ func (meta *Meta) Contribute(p *Page) (err error) {
 	case meta.IsOGLocale():
 		p.OpenGraph.Locale = meta.Content
 	case meta.IsOGUpdatedTime():
-		p.OpenGraph.UpdatedTime = ParseDateP(meta.Content)
-	case meta.IsArticleAuthor():
-		p.Article.Author = meta.Content
+		p.OpenGraph.UpdatedTime = ParseDate(meta.Content)
 	case meta.IsArticlePublishedTime():
-		p.Article.PublishedTime = ParseDateP(meta.Content)
+		p.OpenGraph.Article.PublishedTime = ParseDate(meta.Content)
 	case meta.IsArticleModifiedTime():
-		p.Article.ModifiedTime = ParseDateP(meta.Content)
-	case meta.IsArticlePublisher():
-		p.Article.Publisher = meta.Content
+		p.OpenGraph.Article.ModifiedTime = ParseDate(meta.Content)
+	case meta.IsArticleExpirationTime():
+		p.OpenGraph.Article.ExpirationTime = ParseDate(meta.Content)
+	case meta.IsArticleAuthor():
+		p.OpenGraph.Article.Authors = append(p.OpenGraph.Article.Authors, meta.Content)
 	case meta.IsArticleSection():
-		p.Article.Section = append(p.Article.Section, meta.Content)
+		p.OpenGraph.Article.Sections = append(p.OpenGraph.Article.Sections, meta.Content)
+	case meta.IsArticleTag():
+		p.OpenGraph.Article.Tags = append(p.OpenGraph.Article.Tags, meta.Content)
 	}
 	return err
 }
@@ -201,9 +203,14 @@ func (meta *Meta) IsArticleModifiedTime() bool {
 	return meta.Property == "article:modified_time"
 }
 
-// IsArticlePublisher returns if it can be "article:publisher"
-func (meta *Meta) IsArticlePublisher() bool {
-	return meta.Property == "article:publisher"
+// IsArticleExpirationTime returns if it can be "article:expiration_time"
+func (meta *Meta) IsArticleExpirationTime() bool {
+	return meta.Property == "article:expiration_time"
+}
+
+// IsArticleAuthor returns if it can be "article:author"
+func (meta *Meta) IsArticleAuthor() bool {
+	return meta.Property == "article:author"
 }
 
 // IsArticleSection returns if it can be "article:section"
@@ -211,7 +218,7 @@ func (meta *Meta) IsArticleSection() bool {
 	return meta.Property == "article:section"
 }
 
-// IsArticleAuthor returns if it can be "article:author"
-func (meta *Meta) IsArticleAuthor() bool {
-	return meta.Property == "article:author"
+// IsArticleTag returns if it can be "article:tag"
+func (meta *Meta) IsArticleTag() bool {
+	return meta.Property == "article:tag"
 }

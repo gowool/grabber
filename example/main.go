@@ -7,7 +7,7 @@ import (
 	"github.com/gowool/grabber"
 )
 
-const target = "https://www.rainews.it/articoli/2023/12/massiccio-attacco-di-hacker-russi-a-enti-pubblici-italiani-chiesto-un-riscatto-6e384558-28ab-4aa4-9c64-9994eaf83ed8.html"
+const target = "https://www.cnbc.com/2025/06/05/auto-groups-sound-the-alarm-as-chinas-rare-earth-curbs-start-to-bite.html"
 
 func main() {
 	req, err := grabber.NewRequest(target)
@@ -22,5 +22,5 @@ func main() {
 
 	enc := json.NewEncoder(os.Stdout)
 	enc.SetIndent("", "  ")
-	enc.Encode(page)
+	_ = enc.Encode(page)
 }

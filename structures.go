@@ -12,35 +12,37 @@ import (
 )
 
 type Page struct {
-	URL         string     `json:"url,omitempty"`
-	Title       string     `json:"title,omitempty"`
-	Description string     `json:"description,omitempty"`
-	Keywords    string     `json:"keywords,omitempty"`
-	Author      string     `json:"author,omitempty"`
-	Favicon     []string   `json:"favicon,omitempty"`
-	OpenGraph   *OpenGraph `json:"open_graph,omitempty"`
-	Article     *Article   `json:"article,omitempty"`
-}
-
-type Article struct {
-	PublishedTime *time.Time `json:"published_time,omitempty"`
-	ModifiedTime  *time.Time `json:"modified_time,omitempty"`
-	Publisher     string     `json:"publisher,omitempty"`
-	Author        string     `json:"author,omitempty"`
-	Section       []string   `json:"section,omitempty"`
+	URL         string    `json:"url,omitempty"`
+	Title       string    `json:"title,omitempty"`
+	Description string    `json:"description,omitempty"`
+	Keywords    string    `json:"keywords,omitempty"`
+	Authors     []string  `json:"authors,omitempty"`
+	Favicons    []string  `json:"favicons,omitempty"`
+	OpenGraph   OpenGraph `json:"open_graph,omitempty"`
 }
 
 type OpenGraph struct {
-	Title       string     `json:"title,omitempty"`
-	Type        string     `json:"type,omitempty"`
-	URL         string     `json:"url,omitempty"`
-	Description string     `json:"description,omitempty"`
-	Locale      string     `json:"locale,omitempty"`
-	SiteName    string     `json:"site_name,omitempty"`
-	UpdatedTime *time.Time `json:"updated_time,omitempty"`
-	Video       []Video    `json:"video,omitempty"`
-	Image       []Image    `json:"image,omitempty"`
-	Audio       []Audio    `json:"audio,omitempty"`
+	Title       string    `json:"title,omitempty"`
+	Type        string    `json:"type,omitempty"`
+	URL         string    `json:"url,omitempty"`
+	Description string    `json:"description,omitempty"`
+	Locale      string    `json:"locale,omitempty"`
+	SiteName    string    `json:"site_name,omitempty"`
+	UpdatedTime time.Time `json:"updated_time,omitzero"`
+	Article     Article   `json:"article,omitempty,omitzero"`
+	Images      []Image   `json:"images,omitempty,omitzero"`
+	Videos      []Video   `json:"videos,omitempty,omitzero"`
+	Audio       []Audio   `json:"audio,omitempty,omitzero"`
+}
+
+// Article represents a structure of "article".
+type Article struct {
+	PublishedTime  time.Time `json:"published_time,omitzero"`
+	ModifiedTime   time.Time `json:"modified_time,omitzero"`
+	ExpirationTime time.Time `json:"expiration_time,omitzero"`
+	Authors        []string  `json:"authors,omitempty"`
+	Sections       []string  `json:"sections,omitempty"`
+	Tags           []string  `json:"tags,omitempty"`
 }
 
 // Image represents a structure of "og:image".
@@ -91,11 +93,7 @@ type Audio struct {
 }
 
 func NewPage(url string) *Page {
-	return &Page{
-		URL:       url,
-		OpenGraph: new(OpenGraph),
-		Article:   new(Article),
-	}
+	return &Page{URL: url}
 }
 
 // Parse parses http.Response.Body and construct Page informations.
@@ -157,24 +155,24 @@ func (p *Page) ToAbs() error {
 		return err
 	}
 	// For og:image.
-	for i, img := range p.OpenGraph.Image {
-		p.OpenGraph.Image[i].URL = joinToAbsolute(base, img.URL)
+	for i, img := range p.OpenGraph.Images {
+		p.OpenGraph.Images[i].URL = joinToAbsolute(base, img.URL)
 	}
 	// For og:audio
 	for i, audio := range p.OpenGraph.Audio {
 		p.OpenGraph.Audio[i].URL = joinToAbsolute(base, audio.URL)
 	}
 	// For og:video
-	for i, video := range p.OpenGraph.Video {
-		p.OpenGraph.Video[i].URL = joinToAbsolute(base, video.URL)
+	for i, video := range p.OpenGraph.Videos {
+		p.OpenGraph.Videos[i].URL = joinToAbsolute(base, video.URL)
 	}
 
-	if len(p.Favicon) == 0 {
-		p.Favicon = []string{"/favicon.ico"}
+	if len(p.Favicons) == 0 {
+		p.Favicons = []string{"/favicon.ico"}
 	}
 
-	for i, favicon := range p.Favicon {
-		p.Favicon[i] = joinToAbsolute(base, favicon)
+	for i, favicon := range p.Favicons {
+		p.Favicons[i] = joinToAbsolute(base, favicon)
 	}
 
 	return nil

@@ -186,15 +186,20 @@ var DateFormatsWithNamedZone = []string{
 }
 
 func ParseDateP(ds string) *time.Time {
-	if t, err := ParseDate(ds); err == nil {
+	if t, err := ParseDateE(ds); err == nil {
 		return &t
 	}
 	return nil
 }
 
-// ParseDate parses a given date string using a large
+func ParseDate(ds string) time.Time {
+	t, _ := ParseDateE(ds)
+	return t
+}
+
+// ParseDateE parses a given date string using a large
 // list of commonly found feed date formats.
-func ParseDate(ds string) (t time.Time, err error) {
+func ParseDateE(ds string) (t time.Time, err error) {
 	d := strings.TrimSpace(ds)
 	if d == "" {
 		return t, fmt.Errorf("date string is empty")
